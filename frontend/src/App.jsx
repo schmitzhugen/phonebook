@@ -30,7 +30,7 @@ const App = () => {
     const hook = () => {
       console.log('effect')
       axios
-        .get('http://localhost:3001/persons')
+        .get('http://localhost:3001/api/persons')
         .then(response =>{
           console.log('promise fulfilled')
           setPersons(response.data)
@@ -49,7 +49,7 @@ const App = () => {
     }
 
     const deleteNoteOf = (id) => {
-      const url = `http://localhost:3001/persons/${id}`
+      const url = `http://localhost:3001/api/persons/${id}`
 
       if (window.confirm("Are you sure you want to delete this entry from your phonebook?")){
         axios
@@ -73,7 +73,7 @@ const App = () => {
             const changedNumber = {...persons[i], number: newNumber}
             const updatedPersons = [...persons]
             axios
-              .put(`http://localhost:3001/persons/${persons[i].id}`, changedNumber)
+              .put(`http://localhost:3001/api/persons/${persons[i].id}`, changedNumber)
               .then(response => {
                 setPersons(persons => {
                   updatedPersons[i] = response.data;
@@ -98,7 +98,7 @@ const App = () => {
       }
 
       axios
-        .post('http://localhost:3001/persons', personObject)
+        .post('http://localhost:3001/api/persons', personObject)
         .then((response) => {
           setPersons(persons.concat(response.data)) //this directly updates Persons with data from the server (by using response.data)
           setNewName('')
