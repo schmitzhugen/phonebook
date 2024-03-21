@@ -10,27 +10,52 @@ app.use(cors())
 app.use(express.static('dist'))
 app.use(morgan('tiny'))
 
+const helmet = require('helmet');
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'none'"],
+      fontSrc: ["'self'", "data:"], // Allow loading fonts from self and data URIs
+    },
+  },
+}));
+
+
 const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
   })
+
+  app.get('/info', (request, response, next) => {
+    Person.countDocuments({})
+        .then(i => {
+            response.send(`Phonebook has info for ${i} people.`)
+        })
+        .catch(error => next(error))
+})
 
 app.get('/api/persons', (request, response) => {
     Person.find({}).then(i => {
         response.json(i)
     })})
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
     Person.findById(request.params.id).then(i => {
+        if (i) {
         response.json(i)
+        } else {
+            response.status(404).end()
+        }
     })
+        .catch(error => next(error))
 })
            
 app.delete('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    Person.findByIdAndDelete(id).then(() => {
+    Person.findByIdAndDelete(request.params.id).then(() => {
         response.status(204).end()
     })
+    .catch(error => next(error))
 })
 
 app.post('/api/persons', (request, response) => {
@@ -46,3 +71,31 @@ app.post('/api/persons', (request, response) => {
         response.json(result)
     })
 })
+
+app.put('/api/persons/:id', (request, response, next) => {
+    const body = request.body
+    const new_details = {
+        name: body.name,
+        number: body.number
+    }
+
+    Person.findByIdAndUpdate(request.params.id, new_details, { new: true})
+        .then(i => {
+            response.json(i)
+        })
+        .catch(error => next(error))
+
+})
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+  
+    if (error.name === 'CastError') {
+      return response.status(400).send({ error: 'malformatted id' })
+    } 
+  
+    next(error)
+  }
+  
+  // this has to be the last loaded middleware, also all the routes should be registered before this!
+  app.use(errorHandler)
