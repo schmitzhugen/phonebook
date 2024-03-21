@@ -2,15 +2,6 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './index.css'
 
-const baseUrl = '/api/persons'
-
-const getAll = () => {
-  const request = axios.get(baseUrl)
-  return request.then(response => response.data)
-}
-
-// ...
-
 const Filter = ( {newFilter, handleFilterChange} ) => {
   return(
     <div>Filter: <input value = {newFilter} onChange={handleFilterChange}/></div>
@@ -39,7 +30,7 @@ const App = () => {
     const hook = () => {
       console.log('effect')
       axios
-        .get('http://localhost:3001/api/persons')
+        .get('/api/persons')
         .then(response =>{
           console.log('promise fulfilled')
           setPersons(response.data)
@@ -58,7 +49,7 @@ const App = () => {
     }
 
     const deleteNoteOf = (id) => {
-      const url = `http://localhost:3001/api/persons/${id}`
+      const url = `/api/persons/${id}`
 
       if (window.confirm("Are you sure you want to delete this entry from your phonebook?")){
         axios
@@ -82,7 +73,7 @@ const App = () => {
             const changedNumber = {...persons[i], number: newNumber}
             const updatedPersons = [...persons]
             axios
-              .put(`http://localhost:3001/api/persons/${persons[i].id}`, changedNumber)
+              .put(`/api/persons/${persons[i].id}`, changedNumber)
               .then(response => {
                 setPersons(persons => {
                   const updatedIndex = persons.findIndex(person => person.id === response.data.id);
@@ -108,7 +99,7 @@ const App = () => {
       }
 
       axios
-        .post('http://localhost:3001/api/persons', personObject)
+        .post('/api/persons', personObject)
         .then((response) => {
           setPersons(persons.concat(response.data)) //this directly updates Persons with data from the server (by using response.data)
           setNewName('')
