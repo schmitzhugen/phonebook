@@ -76,7 +76,8 @@ const App = () => {
               .put(`http://localhost:3001/api/persons/${persons[i].id}`, changedNumber)
               .then(response => {
                 setPersons(persons => {
-                  updatedPersons[i] = response.data;
+                  const updatedIndex = persons.findIndex(person => person.id === response.data.id);
+                  updatedPersons[updatedIndex] = response.data;
                   setUserMessage(`We've now updated ${newName}'s number.`)
                   setTimeout(() => {
                     setUserMessage(null)
