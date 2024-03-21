@@ -34,6 +34,13 @@ app.get('/info', (request, response, next) => {
     .catch(error => next(error))
 })
 
+app.get('/', (request, response) => {
+    Person.find({}).then(i => {
+    response.json(i)
+    })
+  })
+  
+
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(i => {
     response.json(i)
