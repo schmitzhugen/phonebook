@@ -2,6 +2,15 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './index.css'
 
+const baseUrl = '/api/persons'
+
+const getAll = () => {
+  const request = axios.get(baseUrl)
+  return request.then(response => response.data)
+}
+
+// ...
+
 const Filter = ( {newFilter, handleFilterChange} ) => {
   return(
     <div>Filter: <input value = {newFilter} onChange={handleFilterChange}/></div>
