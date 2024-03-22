@@ -6,7 +6,7 @@ const cors = require('cors')
 const Person = require('./models/person')
 
 app.use(express.json())
-app.use(cors())
+app.use(cors({ origin: true }));
 app.use(express.static('dist'))
 app.use(morgan('tiny'))
 

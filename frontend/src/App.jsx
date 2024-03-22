@@ -2,6 +2,13 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './index.css'
 
+const baseUrl = "/api/persons";
+
+const getAll = async () => {
+  const resp = await axios.get(baseUrl);
+  return resp.data;
+};
+
 const Filter = ( {newFilter, handleFilterChange} ) => {
   return(
     <div>Filter: <input value = {newFilter} onChange={handleFilterChange}/></div>
@@ -27,26 +34,18 @@ const App = () => {
   const [newFilter, setNewFilter] = useState('')
   const [userMessage, setUserMessage] = useState(null)
   
-    const hook = () => {
-      console.log('effect')
-      axios
-        .get('/api/persons')
-        .then(response =>{
-          console.log('promise fulfilled')
-          setPersons(response.data)
-        })
-    }
+  useEffect(() => {
+      getAll()
+      .then(setPersons)})
 
-    useEffect(hook, [])
-
-    const Person = ({ persons, deleteNote }) => {
-      return (
-        <li key={persons.id}>
-          {persons.name} {persons.number}
-          <button onClick = {deleteNote}>delete</button>
-        </li>
-      )
-    }
+    function Person({ persons, deleteNote }) {
+  return (
+    <li key={persons.id}>
+      {persons.name} {persons.number}
+      <button onClick={deleteNote}>delete</button>
+    </li>
+  );
+}
 
     const deleteNoteOf = (id) => {
       const url = `/api/persons/${id}`
